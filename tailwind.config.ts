@@ -8,9 +8,17 @@ export default {
   ],
   theme: {
     extend: {
+      caretShape: {
+        block: 'block',
+      },
+      // textUnderlineOffset: {
+      //   6: '4px',
+      // },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        "greenBg": "#D1FAE5",
+        "baseBg": "#F5F5F5"
       },
     },
   },
