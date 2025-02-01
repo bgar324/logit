@@ -11,7 +11,7 @@ const MovementComponent = () => {
   };
 
   return (
-    <div className="flex flex-col text-xl my-2 w-min bg-green-50">
+    <div className="flex flex-col text-xl my-2 w-min ">
       <input
         placeholder="movement"
         className="bg-transparent focus:outline-none placeholder:underline text-gray-800 placeholder:gray-800 underline"
@@ -24,7 +24,7 @@ const MovementComponent = () => {
       ))}
       <button
         onClick={addSet}
-        className="border rounded-full mx-0 w-full px-2 my-2 text-lg"
+        className="border rounded-full mx-0 w-full px-2 my-2 text-lg hover:bg-gray-200 duration-300 ease-in-out"
       >
         add set
       </button>

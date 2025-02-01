@@ -3,7 +3,7 @@ import RoundedBox from "./components/RoundedBox";
 export default function Home() {
   return (
     <div className="font-[family-name:var(--font-geist-sans)] flex flex-col h-screen justify-center items-center">
-      <div className="flex flex-row justify-center items-center gap-16">
+      <div className="flex justify-center items-center gap-16 flex-col sm:flex-col md:flex-row">
         <RoundedBox
           route = "/calendar" 
           borderColor="#CA8A04"

@@ -16,8 +16,8 @@ const RoundedBox: React.FC<RoundedBoxProps> = ({ borderColor, interiorColor, tex
       border: `2px solid ${borderColor}`,
       backgroundColor: interiorColor,
     }}>
-        <span className="text-3xl">{icon}</span>
-        <h2 className="text-black text-2xl pt-4 underline whitespace-nowrap">{text}</h2>    
+        <span className="text-xl sm:text-2xl md:text-3xl">{icon}</span>
+        <h2 className="text-black text-lg sm:text-xl md:text-2xl pt-4 underline whitespace-nowrap">{text}</h2>    
     </a>
   );
 };

@@ -1,1 +1,10 @@
 this is where i copy and paste stuff
+
+
+todooooooooooooo:
+* comment feature
+* place tags actually on the screen and be able to click them
+* save and go to database function
+* address error with double indexes
+
+* everything logic

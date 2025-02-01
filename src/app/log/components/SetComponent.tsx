@@ -6,7 +6,7 @@ interface SetComponentProps {
 
 const SetComponent: React.FC<SetComponentProps> = ({ setNumber }) => {
   return (
-    <div className="flex flex-col pl-5 bg-red-50">
+    <div className="flex flex-col pl-5 ">
       <div className="flex flex-row justify-between items-center">
         <span className="pr-5 bg-transparent text-gray-500 text-lg">{setNumber}</span>
         <input
