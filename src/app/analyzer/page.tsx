@@ -1,3 +1,12 @@
-export default function AnalyzerPage() {
-  return <h1>This is the Analyze page</h1>;
+import React from 'react'
+import TagFilter from '../log/components/TagFilter'
+
+const page = () => {
+  return (
+    <div className = "flex justify-center items-center w-screen h-screen">
+      <TagFilter />
+    </div>
+  )
 }
+
+export default page

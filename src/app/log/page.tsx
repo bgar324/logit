@@ -45,7 +45,6 @@ export default function LogPage() {
             spellCheck="false"
           />
         </div>
-        {/* <MovementComponent /> */}
         {movements.map((id) => (
           <MovementComponent key={id} />
         ))}
