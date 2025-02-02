@@ -24,7 +24,7 @@ const CommentBox = ({ onClose, onSave, onDelete }: { onClose: () => void; onSave
         placeholder="any notes?"
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        className="w-36 border rounded-full bg-gray-200 focus:outline-none pl-1"
+        className="w-36 border rounded-full bg-gray-200 focus:outline-none pl-2"
       />
       {comment.length > 0 && (
         <button className="text-green-600 ml-2" onClick={handleSave}>

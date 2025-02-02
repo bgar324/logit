@@ -2,8 +2,9 @@ this is where i copy and paste stuff
 
 
 todooooooooooooo:
-* comment feature
-* place tags actually on the screen and be able to click them
+* comment feature  | done
+* place tags actually on the screen and be able to click them | done
+* delete set feature | done
 * save and go to database function
 * address error with double indexes
 
@@ -27,3 +28,9 @@ button thing
             type="text"
             spellCheck="false"
           /> */}
+
+
+    todo 2
+    * fix tags
+    * fix data sent
+    * fix tags not working, um. cant do more than 1 tag

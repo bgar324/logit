@@ -5,19 +5,13 @@ const prisma = new PrismaClient();
 
 export async function GET() {
   try {
-    const tags = await prisma.tags.findMany({
-      select: { tagName: true },
+    const tags = await prisma.tag.findMany({
+      select: { name: true }, // Only return tag names
     });
-    
-    return NextResponse.json(
-      { tags: tags.map(tag => tag.tagName) },
-      { status: 200 }
-    );
+
+    return NextResponse.json({ tags });
   } catch (error) {
     console.error("Error fetching tags:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch tags" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch tags" }, { status: 500 });
   }
 }
