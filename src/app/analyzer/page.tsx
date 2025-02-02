@@ -1,10 +1,9 @@
 import React from 'react'
-import TagFilter from '../log/components/TagFilter'
+import CommentBox from '../log/components/CommentBox'
 
 const page = () => {
   return (
     <div className = "flex justify-center items-center w-screen h-screen">
-      <TagFilter />
     </div>
   )
 }

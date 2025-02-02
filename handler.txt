@@ -8,3 +8,22 @@ todooooooooooooo:
 * address error with double indexes
 
 * everything logic
+
+button thing
+          {/* <input
+            placeholder="any notes?"
+            className="
+              placeholder:italic 
+              placeholder-gray-400 
+              bg-transparent 
+              placeholder:underline 
+              italic 
+              text-gray-400 
+              focus:outline-none 
+              underline 
+              caret-transparent 
+              focus:placeholder-font-semibold
+            "
+            type="text"
+            spellCheck="false"
+          /> */}
