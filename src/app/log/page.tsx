@@ -26,6 +26,13 @@ export default function LogPage() {
     setMovementCount((prev) => prev + 1);
   };
 
+  const handleAddMovement = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    addMovement();
+  };
+
   const [showTagFilter, setShowTagFilter] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [showCommentBox, setShowCommentBox] = useState(false);
@@ -44,9 +51,7 @@ export default function LogPage() {
   };
 
   const handleTagSelect = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev : [...prev, tag]
-    );
+    setSelectedTags((prev) => (prev.includes(tag) ? prev : [...prev, tag]));
     setShowTagFilter(false);
   };
 
@@ -132,7 +137,7 @@ export default function LogPage() {
           </div>
         </div>
 
-        <div className="flex items-center space-x-2 mt-4">
+        <div className="flex items-center space-x-2">
           {selectedTags.map((tag, index) => (
             <span
               key={`${index}-${tag}`}
@@ -150,7 +155,10 @@ export default function LogPage() {
         </div>
 
         {showTagFilter && (
-          <TagFilter onClose={() => setShowTagFilter(false)} onTagSelect={handleTagSelect} />
+          <TagFilter
+            onClose={() => setShowTagFilter(false)}
+            onTagSelect={handleTagSelect}
+          />
         )}
 
         <div className="mt-4">
@@ -160,38 +168,31 @@ export default function LogPage() {
         </div>
         <button
           className="border rounded-full flex items-center justify-center mx-auto w-40 px-2 my-4 hover:bg-gray-200 duration-300 ease-in-out"
-          onClick={addMovement}
+          onMouseDown={(e) => {
+            e.preventDefault(); // Prevents the default focus change behavior
+            e.stopPropagation(); // Stops the event from bubbling
+            // Optionally, force blur of the active element
+            if (document.activeElement instanceof HTMLElement) {
+              document.activeElement.blur();
+            }
+            // Immediately add the movement
+            addMovement();
+          }}
         >
           add movement
         </button>
       </div>
       {/* todo, DON'T TOUCH! */}
-      <div className = "absolute right-20 top-20 flex flex-col text-purple-400">
-        <h1 className = "underline">
-          todo
-        </h1>
-        <ol className = "pl-4">
-          <li>
-            form constraints
-          </li>
-          <li>
-            same date api handling
-          </li>
-          <li>
-            fix database col / row parameters
-          </li>
-          <li>
-            change tags so that its string? and not array
-          </li>
+      <div className="absolute right-20 top-20 flex flex-col text-purple-400">
+        <h1 className="underline">todo</h1>
+        <ol className="pl-4">
+          <li>same date api handling</li>
+          <li>fix database col / row parameters</li>
+          <li>change tags so that its string? and not array</li>
           <li>
             allow to find pr's (n movement, k sets = n pr sets) PER workout
           </li>
-          <li>
-            only on focus does the thing show the add set button
-          </li>
-          <li>
-            dropsets
-          </li>
+          <li>dropsets</li>
         </ol>
       </div>
     </div>

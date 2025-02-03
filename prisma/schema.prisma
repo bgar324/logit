@@ -11,7 +11,7 @@ model WorkoutLog {
   id                 String     @id @default(uuid())
   formattedDate      String?
   notes              String?
-  tags               String[]   // Storing tags as an array of strings
+  tags               String[]  
   movements          Movement[]
 }
 
