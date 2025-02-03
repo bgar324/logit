@@ -18,7 +18,8 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         "greenBg": "#D1FAE5",
-        "baseBg": "#F5F5F5"
+        "baseBg": "#F5F5F5",
+        "highlightColor" : "#e8e4ec"
       },
     },
   },

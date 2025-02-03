@@ -4,32 +4,18 @@ import React, { useEffect, useState } from "react";
 import { faXmarkCircle } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const TagFilter = ({ onClose, onTagSelect }: { onClose: () => void; onTagSelect: (tag: { id: number; name: string }) => void }) => {
-  const [tags, setTags] = useState<{ id: number; name: string }[]>([]);
+interface TagFilterProps {
+  onClose: () => void;
+  onTagSelect: (tag: string) => void;
+}
 
+const TagFilter = ({ onClose, onTagSelect }: TagFilterProps) => {
+  const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {
-    fetchTags();
+    // For now, we use a static list of tags
+    setTags(["push", "pull", "legs", "arms", "chest and back"]);
   }, []);
-
-  const fetchTags = async () => {
-    try {
-      const response = await fetch("/api/tags", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch tags");
-      }
-      const data = await response.json();
-      console.log("Fetched data:", data);
-      setTags(data.tags);
-    } catch (error) {
-      console.error("Error fetching tags:", error);
-    }
-  };
 
   return (
     <div className="flex flex-row w-80 bg-white shadow-md rounded-lg p-3 absolute mt-20">
@@ -50,7 +36,7 @@ const TagFilter = ({ onClose, onTagSelect }: { onClose: () => void; onTagSelect:
               onClick={() => onTagSelect(tag)}
               className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm whitespace-nowrap hover:cursor-pointer"
             >
-              {tag.name}
+              {tag}
             </span>
           ))}
         </div>

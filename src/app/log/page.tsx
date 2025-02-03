@@ -27,7 +27,7 @@ export default function LogPage() {
   };
 
   const [showTagFilter, setShowTagFilter] = useState(false);
-  const [selectedTags, setSelectedTags] = useState<{ id: number; name: string }[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [savedComment, setSavedComment] = useState<string | null>(null);
 
@@ -43,20 +43,22 @@ export default function LogPage() {
     setShowCommentBox(false);
   };
 
-  const handleTagSelect = (tag: { id: number; name: string }) => {
+  const handleTagSelect = (tag: string) => {
     setSelectedTags((prev) =>
-      prev.some((t) => t.id === tag.id) ? prev : [...prev, tag]
+      prev.includes(tag) ? prev : [...prev, tag]
     );
     setShowTagFilter(false);
   };
 
   const handleLogWorkout = async () => {
     const workoutData = {
-      date: new Date().toISOString(),
+      formattedDate,
       notes: savedComment,
-      tags: selectedTags.map((tag) => tag.id),
+      tags: selectedTags, // Sending an array of tag strings
       movements: movements.map((id) => ({
-        name: (document.getElementById(`movement-${id}`) as HTMLInputElement)?.value || "",
+        name:
+          (document.getElementById(`movement-${id}`) as HTMLInputElement)
+            ?.value || "",
         sets: Array.from(document.querySelectorAll(`.movement-${id}-set`)).map(
           (setEl: any) => ({
             weight: parseFloat(setEl.querySelector(".weight")?.value) || 0,
@@ -122,7 +124,7 @@ export default function LogPage() {
 
           <div>
             <button
-              className="border rounded-full mx-0 w-full px-4 my-2 text-md hover:bg-gray-200 duration-300 ease-in-out"
+              className="border rounded-full mx-0 w-full px-4 py-2 my-2 text-md hover:bg-gray-200 duration-300 ease-in-out"
               onClick={handleLogWorkout}
             >
               log
@@ -131,28 +133,24 @@ export default function LogPage() {
         </div>
 
         <div className="flex items-center space-x-2 mt-4">
-          {selectedTags.map((tag) => (
+          {selectedTags.map((tag, index) => (
             <span
-              key={`${tag.id}-${tag.name}`}
+              key={`${index}-${tag}`}
               className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm"
             >
-              {tag.name}
+              {tag}
             </span>
           ))}
           <button
-            className="border rounded-full w-10 px-2 hover:bg-gray-200 duration-300 ease-in-out"
+            className="border rounded-full w-10 px-2 hover:bg-gray-200 duration-300 ease-in-out focus:bg-gray-200"
             onClick={() => setShowTagFilter(true)}
           >
             +
           </button>
         </div>
 
-        {/* TagFilter Component */}
         {showTagFilter && (
-          <TagFilter
-            onClose={() => setShowTagFilter(false)}
-            onTagSelect={(tag: { id: number; name: string }) => handleTagSelect(tag)}
-          />
+          <TagFilter onClose={() => setShowTagFilter(false)} onTagSelect={handleTagSelect} />
         )}
 
         <div className="mt-4">
@@ -166,6 +164,35 @@ export default function LogPage() {
         >
           add movement
         </button>
+      </div>
+      {/* todo, DON'T TOUCH! */}
+      <div className = "absolute right-20 top-20 flex flex-col text-purple-400">
+        <h1 className = "underline">
+          todo
+        </h1>
+        <ol className = "pl-4">
+          <li>
+            form constraints
+          </li>
+          <li>
+            same date api handling
+          </li>
+          <li>
+            fix database col / row parameters
+          </li>
+          <li>
+            change tags so that its string? and not array
+          </li>
+          <li>
+            allow to find pr's (n movement, k sets = n pr sets) PER workout
+          </li>
+          <li>
+            only on focus does the thing show the add set button
+          </li>
+          <li>
+            dropsets
+          </li>
+        </ol>
       </div>
     </div>
   );

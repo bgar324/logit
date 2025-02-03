@@ -8,49 +8,33 @@ datasource db {
 }
 
 model WorkoutLog {
-  id        String     @id @default(uuid()) 
-  date      DateTime   
-  notes     String?    
-  tags      WorkoutLogTag[]
-  movements Movement[]
+  id                 String     @id @default(uuid())
+  formattedDate      String?
+  notes              String?
+  tags               String[]   // Storing tags as an array of strings
+  movements          Movement[]
 }
 
 model Movement {
   id        String     @id @default(uuid())
-  name      String     
+  name      String
   log       WorkoutLog @relation(fields: [logId], references: [id])
-  logId     String     
-  sets      Set[]      
+  logId     String
+  sets      Set[]
 }
 
 model Set {
   id         String    @id @default(uuid())
   movement   Movement @relation(fields: [movementId], references: [id])
-  movementId String   
-  weight     Float    
-  reps       Int      
-}
-
-model Tag {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  workoutLogs WorkoutLogTag[]
+  movementId String
+  weight     Float
+  reps       Int
 }
 
 model WorkoutGlobal {
-  id         String  @id @default(uuid())
-  movement   String  @unique 
-  bestWeight Float   
-  bestReps   Int     
+  id          String   @id @default(uuid())
+  movement    String   @unique
+  bestWeight  Float
+  bestReps    Int
   lastUpdated DateTime @updatedAt
 }
-
-model WorkoutLogTag {
-  workoutLog WorkoutLog @relation(fields: [workoutLogId], references: [id])
-  workoutLogId String
-  tag Tag @relation(fields: [tagId], references: [id])
-  tagId Int
-
-  @@id([workoutLogId, tagId]) // Composite primary key to avoid duplicates
-}
-
