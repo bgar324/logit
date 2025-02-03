@@ -38,7 +38,7 @@ const SetComponent: React.FC<SetComponentProps> = ({ setNumber, onDelete }) => {
       }}
     >
       <div className="flex flex-row justify-between items-center w-full">
-        <span className="pr-5 bg-transparent text-gray-500 text-lg">
+        <span className="w-10 pr-5 bg-transparent text-gray-500 text-lg">
           {setNumber}
         </span>
         <input

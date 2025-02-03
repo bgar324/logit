@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "WorkoutLog" ALTER COLUMN "tags" DROP NOT NULL,
+ALTER COLUMN "tags" SET DATA TYPE TEXT;

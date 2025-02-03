@@ -18,7 +18,7 @@ const TagFilter = ({ onClose, onTagSelect }: TagFilterProps) => {
   }, []);
 
   return (
-    <div className="flex flex-row w-80 bg-white shadow-md rounded-lg p-3 absolute mt-24">
+    <div className="flex flex-row w-80 bg-white shadow-md rounded-lg p-3 absolute mt-20">
       <div className="flex flex-col">
         <div className="flex items-center justify-between w-full gap-2">
           <input

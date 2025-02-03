@@ -5,13 +5,13 @@ const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
   try {
-    const { formattedDate, notes, tags, movements } = await req.json() as {
+    const { formattedDate, notes, tag, movements } = await req.json() as {
       formattedDate: string;
       notes: string;
-      tags: string[]; // Now an array of tag names
+      tag: string;
       movements: {
         name: string;
-        sets: { weight: number; reps: number }[];
+        sets: { weight: number; reps: number; setNumber: number }[];
       }[];
     };
 
@@ -19,12 +19,29 @@ export async function POST(req: Request) {
       data: {
         formattedDate,
         notes,
-        tags, // Directly store the array of tag names
+        tags: tag,
         movements: {
           create: movements.map((movement) => ({
             name: movement.name,
+            // Create normal sets (where setNumber is an integer)
             sets: {
-              create: movement.sets, // Each set with weight and reps
+              create: movement.sets
+                .filter((s) => Number.isInteger(s.setNumber))
+                .map((s) => ({
+                  weight: s.weight,
+                  reps: s.reps,
+                  setNumber: s.setNumber,
+                })),
+            },
+            // Create dropsets (where setNumber is not an integer)
+            dropsets: {
+              create: movement.sets
+                .filter((s) => !Number.isInteger(s.setNumber))
+                .map((s) => ({
+                  weight: s.weight,
+                  reps: s.reps,
+                  setNumber: s.setNumber,
+                })),
             },
           })),
         },

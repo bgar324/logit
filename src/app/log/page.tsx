@@ -26,15 +26,8 @@ export default function LogPage() {
     setMovementCount((prev) => prev + 1);
   };
 
-  const handleAddMovement = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur();
-    }
-    addMovement();
-  };
-
   const [showTagFilter, setShowTagFilter] = useState(false);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [showCommentBox, setShowCommentBox] = useState(false);
   const [savedComment, setSavedComment] = useState<string | null>(null);
 
@@ -51,7 +44,7 @@ export default function LogPage() {
   };
 
   const handleTagSelect = (tag: string) => {
-    setSelectedTags((prev) => (prev.includes(tag) ? prev : [...prev, tag]));
+    setSelectedTag(tag);
     setShowTagFilter(false);
   };
 
@@ -59,7 +52,7 @@ export default function LogPage() {
     const workoutData = {
       formattedDate,
       notes: savedComment,
-      tags: selectedTags, // Sending an array of tag strings
+      tag: selectedTag || "", 
       movements: movements.map((id) => ({
         name:
           (document.getElementById(`movement-${id}`) as HTMLInputElement)
@@ -67,12 +60,14 @@ export default function LogPage() {
         sets: Array.from(document.querySelectorAll(`.movement-${id}-set`)).map(
           (setEl: any) => ({
             weight: parseFloat(setEl.querySelector(".weight")?.value) || 0,
-            reps: parseInt(setEl.querySelector(".reps")?.value) || 0,
+            reps: parseFloat(setEl.querySelector(".reps")?.value) || 0,
+            // retrieve the set number from the data attribute:
+            setNumber: parseFloat(setEl.getAttribute("data-set-number")) || 0,
           })
         ),
       })),
     };
-
+  
     console.log("Submitting Workout:", workoutData);
 
     try {
@@ -129,7 +124,7 @@ export default function LogPage() {
 
           <div>
             <button
-              className="border rounded-full mx-0 w-full px-4 py-2 my-2 text-md hover:bg-gray-200 duration-300 ease-in-out"
+              className="border rounded-full mx-0 w-full px-4 py-2 my-2 text-md hover:bg-green-200 duration-300 ease-in-out"
               onClick={handleLogWorkout}
             >
               log
@@ -138,27 +133,25 @@ export default function LogPage() {
         </div>
 
         <div className="flex items-center space-x-2">
-          {selectedTags.map((tag, index) => (
+          {selectedTag ? (
             <span
-              key={`${index}-${tag}`}
-              className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm"
+              className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm cursor-pointer"
+              onClick={() => setShowTagFilter(true)}
             >
-              {tag}
+              {selectedTag}
             </span>
-          ))}
-          <button
-            className="border rounded-full w-10 px-2 hover:bg-gray-200 duration-300 ease-in-out focus:bg-gray-200"
-            onClick={() => setShowTagFilter(true)}
-          >
-            +
-          </button>
+          ) : (
+            <button
+              className="border rounded-full w-10 px-2 hover:bg-gray-200 duration-300 ease-in-out focus:bg-gray-200"
+              onClick={() => setShowTagFilter(true)}
+            >
+              +
+            </button>
+          )}
         </div>
 
         {showTagFilter && (
-          <TagFilter
-            onClose={() => setShowTagFilter(false)}
-            onTagSelect={handleTagSelect}
-          />
+          <TagFilter onClose={() => setShowTagFilter(false)} onTagSelect={handleTagSelect} />
         )}
 
         <div className="mt-4">
@@ -167,17 +160,8 @@ export default function LogPage() {
           ))}
         </div>
         <button
-          className="border rounded-full flex items-center justify-center mx-auto w-40 px-2 my-4 hover:bg-gray-200 duration-300 ease-in-out"
-          onMouseDown={(e) => {
-            e.preventDefault(); // Prevents the default focus change behavior
-            e.stopPropagation(); // Stops the event from bubbling
-            // Optionally, force blur of the active element
-            if (document.activeElement instanceof HTMLElement) {
-              document.activeElement.blur();
-            }
-            // Immediately add the movement
-            addMovement();
-          }}
+          className="border rounded-full flex items-center justify-center mx-auto w-40 px-2 my-4 hover:bg-gray-200 duration-300 ease-in-out text-md"
+          onClick={addMovement}
         >
           add movement
         </button>
@@ -188,10 +172,7 @@ export default function LogPage() {
         <ol className="pl-4">
           <li>same date api handling</li>
           <li>fix database col / row parameters</li>
-          <li>change tags so that its string? and not array</li>
-          <li>
-            allow to find pr's (n movement, k sets = n pr sets) PER workout
-          </li>
+          <li>allow to find pr's (n movement, k sets = n pr sets) PER workout</li>
           <li>dropsets</li>
         </ol>
       </div>

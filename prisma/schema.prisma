@@ -9,32 +9,43 @@ datasource db {
 
 model WorkoutLog {
   id                 String     @id @default(uuid())
-  formattedDate      String?
+  formattedDate      String?    @unique
   notes              String?
-  tags               String[]  
+  tags               String? 
   movements          Movement[]
 }
 
 model Movement {
   id        String     @id @default(uuid())
   name      String
-  log       WorkoutLog @relation(fields: [logId], references: [id])
+  log       WorkoutLog @relation(fields: [logId], references: [id], onDelete: Cascade)
   logId     String
   sets      Set[]
+  dropsets  Dropset[]  // Added field for the relation to Dropset
 }
 
 model Set {
   id         String    @id @default(uuid())
-  movement   Movement @relation(fields: [movementId], references: [id])
+  movement   Movement  @relation(fields: [movementId], references: [id], onDelete: Cascade)
   movementId String
   weight     Float
-  reps       Int
+  reps       Float
+  setNumber  Float     // added field for ordering
+}
+
+model Dropset {
+  id         String    @id @default(uuid())
+  movement   Movement  @relation(fields: [movementId], references: [id], onDelete: Cascade)
+  movementId String
+  weight     Float
+  reps       Float
+  setNumber  Float
 }
 
 model WorkoutGlobal {
   id          String   @id @default(uuid())
   movement    String   @unique
   bestWeight  Float
-  bestReps    Int
+  bestReps    Float
   lastUpdated DateTime @updatedAt
 }
