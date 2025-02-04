@@ -48,11 +48,25 @@ export default function LogPage() {
     setShowTagFilter(false);
   };
 
+  const deleteMovement = (id: number) => {
+    if (movements.length > 1) {
+      setMovements((prev) => prev.filter((movId) => movId !== id));
+    }
+  };
+
+  const [logButtonText, setLogButtonText] = useState("log");
+  const [isLogging, setIsLogging] = useState(false); // Prevent multiple clicks
+
   const handleLogWorkout = async () => {
+    if (isLogging) return; // Prevent spamming clicks
+
+    setIsLogging(true);
+    setLogButtonText("logging..."); // Show loading state
+
     const workoutData = {
       formattedDate,
       notes: savedComment,
-      tag: selectedTag || "", 
+      tag: selectedTag || "",
       movements: movements.map((id) => ({
         name:
           (document.getElementById(`movement-${id}`) as HTMLInputElement)
@@ -61,14 +75,11 @@ export default function LogPage() {
           (setEl: any) => ({
             weight: parseFloat(setEl.querySelector(".weight")?.value) || 0,
             reps: parseFloat(setEl.querySelector(".reps")?.value) || 0,
-            // retrieve the set number from the data attribute:
             setNumber: parseFloat(setEl.getAttribute("data-set-number")) || 0,
           })
         ),
       })),
     };
-  
-    console.log("Submitting Workout:", workoutData);
 
     try {
       const response = await fetch("/api/log-workout", {
@@ -80,12 +91,16 @@ export default function LogPage() {
       });
 
       if (response.ok) {
-        console.log("Workout logged successfully!");
+        setLogButtonText("logged!");
       } else {
         console.error("Failed to log workout");
+        setLogButtonText("log ❌"); // Indicate failure
       }
     } catch (error) {
       console.error("Error logging workout:", error);
+      setLogButtonText("log ❌");
+    } finally {
+      setIsLogging(false);
     }
   };
 
@@ -124,10 +139,13 @@ export default function LogPage() {
 
           <div>
             <button
-              className="border rounded-full mx-0 w-full px-4 py-2 my-2 text-md hover:bg-green-200 duration-300 ease-in-out"
+              className={`border rounded-full mx-0 w-full px-4 py-2 my-2 text-md duration-300 ease-in-out 
+    ${isLogging ? "bg-gray-300 cursor-not-allowed" : "hover:bg-green-200"}
+  `}
               onClick={handleLogWorkout}
+              disabled={isLogging} // Prevent spam clicks
             >
-              log
+              {logButtonText}
             </button>
           </div>
         </div>
@@ -151,17 +169,27 @@ export default function LogPage() {
         </div>
 
         {showTagFilter && (
-          <TagFilter onClose={() => setShowTagFilter(false)} onTagSelect={handleTagSelect} />
+          <TagFilter
+            onClose={() => setShowTagFilter(false)}
+            onTagSelect={handleTagSelect}
+          />
         )}
 
         <div className="mt-4">
           {movements.map((id) => (
-            <MovementComponent key={id} id={id} />
+            <MovementComponent
+              key={id}
+              id={id}
+              onDelete={() => deleteMovement(id)}
+            />
           ))}
         </div>
         <button
           className="border rounded-full flex items-center justify-center mx-auto w-40 px-2 my-4 hover:bg-gray-200 duration-300 ease-in-out text-md"
-          onClick={addMovement}
+          onMouseDown={(e) => {
+            e.preventDefault();
+            addMovement();
+          }}
         >
           add movement
         </button>
@@ -172,8 +200,11 @@ export default function LogPage() {
         <ol className="pl-4">
           <li>same date api handling</li>
           <li>fix database col / row parameters</li>
-          <li>allow to find pr's (n movement, k sets = n pr sets) PER workout</li>
-          <li>dropsets</li>
+          <li>
+            allow to find pr's (n movement, k sets = n pr sets) PER workout
+          </li>
+          <li>adding tags</li>
+          <li>fix the weird thing thats happening with adding movements and the layers</li>
         </ol>
       </div>
     </div>

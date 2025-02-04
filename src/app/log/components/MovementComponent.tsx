@@ -1,6 +1,8 @@
 // MovementComponent.tsx
 
 import React, { useState, useRef } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import SetComponent from "./SetComponent";
 
 type SetItem = {
@@ -8,7 +10,12 @@ type SetItem = {
   type: "normal" | "drop";
 };
 
-const MovementComponent = ({ id }: { id: number }) => {
+type MovementComponentProps = {
+  id: number;
+  onDelete: () => void;
+};
+
+const MovementComponent = ({ id, onDelete }: MovementComponentProps) => {
   const [text, setText] = useState("");
   const [sets, setSets] = useState<SetItem[]>([{ number: 1, type: "normal" }]);
   const [isFocused, setIsFocused] = useState(false);
@@ -20,10 +27,8 @@ const MovementComponent = ({ id }: { id: number }) => {
     setText(value);
   };
 
-  // When clicking "add set" (the normal set button)
   const addSet = () => {
     const lastSet = sets[sets.length - 1];
-    // If the last set is a drop set, then the new set should be the next integer
     const nextNumber =
       lastSet.type === "drop"
         ? Math.floor(lastSet.number) + 1
@@ -31,17 +36,13 @@ const MovementComponent = ({ id }: { id: number }) => {
     setSets([...sets, { number: nextNumber, type: "normal" }]);
   };
 
-  // When clicking "add drop set"
   const addDropSet = () => {
     const lastSet = sets[sets.length - 1];
-    // Only allow one drop set per normal set (adjust logic as needed)
     if (lastSet.type !== "drop") {
       setSets([...sets, { number: lastSet.number + 0.5, type: "drop" }]);
     }
   };
 
-  // If you need to remove a set (adjust the removal logic if drop sets
-  // should be removable or not)
   const removeSet = (setNumber: number) => {
     if (setNumber !== 1) {
       setSets((prevSets) =>
@@ -53,11 +54,7 @@ const MovementComponent = ({ id }: { id: number }) => {
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col text-xl mb-2 w-min focus:outline-none ${
-        isFocused
-          ? ""
-          : ""
-      }`}
+      className="flex flex-col text-xl mb-2 w-min focus:outline-none relative"
       tabIndex={0}
       onFocus={() => setIsFocused(true)}
       onBlur={(e) => {
@@ -66,22 +63,34 @@ const MovementComponent = ({ id }: { id: number }) => {
         }
       }}
     >
-      <input
-        value={text}
-        onChange={handleTextChange}
-        autoComplete="off"
-        spellCheck="false"
-        id={`movement-${id}`}
-        placeholder="movement"
-        className="bg-transparent focus:outline-none placeholder:underline placeholder:underline-offset-4 text-gray-800 placeholder:gray-800 underline underline-offset-4"
-      />
+      <div className="flex items-center justify-between">
+        <input
+          value={text}
+          onChange={handleTextChange}
+          autoComplete="off"
+          spellCheck="false"
+          id={`movement-${id}`}
+          placeholder="movement"
+          className="bg-transparent focus:outline-none placeholder:underline placeholder:underline-offset-4 text-gray-800 placeholder:gray-800 underline underline-offset-4"
+        />
+        {isFocused && (
+          <FontAwesomeIcon
+            icon={faTrashCan}
+            onClick={onDelete}
+            className="text-gray-400 hover:text-red-500 hover:cursor-pointer ml-2 ease-in-out duration-300"
+          />
+        )}
+      </div>
       {sets.map((set) => (
         <div
           key={set.number}
           className={`movement-${id}-set`}
-          data-set-number={set.number} // store the set number as a data attribute
+          data-set-number={set.number}
         >
-          <SetComponent setNumber={set.number} onDelete={() => removeSet(set.number)} />
+          <SetComponent
+            setNumber={set.number}
+            onDelete={() => removeSet(set.number)}
+          />
         </div>
       ))}
       {isFocused && (
@@ -91,7 +100,7 @@ const MovementComponent = ({ id }: { id: number }) => {
               e.preventDefault();
               addSet();
             }}
-            className="border rounded-full mx-0 w-3/5 px-2 my-2 hover:bg-gray-200 duration-300 ease-in-out"
+            className="border rounded-full w-3/5 px-2 my-2 hover:bg-gray-200 duration-300 ease-in-out"
           >
             add set
           </button>
@@ -100,7 +109,7 @@ const MovementComponent = ({ id }: { id: number }) => {
               e.preventDefault();
               addDropSet();
             }}
-            className="w-2/5 border rounded-full mx-0 px-2 my-2 hover:bg-gray-200 duration-300 ease-in-out"
+            className="w-2/5 border rounded-full px-2 my-2 hover:bg-gray-200 duration-300 ease-in-out"
           >
             add dropset
           </button>

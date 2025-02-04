@@ -15,15 +15,17 @@ export async function POST(req: Request) {
       }[];
     };
 
-    const newWorkout = await prisma.workoutLog.create({
-      data: {
-        formattedDate,
+    const newWorkout = await prisma.workoutLog.upsert({
+      where: { formattedDate },
+      update: {
         notes,
         tags: tag,
+        // For nested relations, you might need additional logic.
+        // For example, you could delete all existing movements and create new ones:
         movements: {
+          deleteMany: {}, // delete existing movements for this log
           create: movements.map((movement) => ({
             name: movement.name,
-            // Create normal sets (where setNumber is an integer)
             sets: {
               create: movement.sets
                 .filter((s) => Number.isInteger(s.setNumber))
@@ -33,7 +35,34 @@ export async function POST(req: Request) {
                   setNumber: s.setNumber,
                 })),
             },
-            // Create dropsets (where setNumber is not an integer)
+            dropsets: {
+              create: movement.sets
+                .filter((s) => !Number.isInteger(s.setNumber))
+                .map((s) => ({
+                  weight: s.weight,
+                  reps: s.reps,
+                  setNumber: s.setNumber,
+                })),
+            },
+          })),
+        },
+      },
+      create: {
+        formattedDate,
+        notes,
+        tags: tag,
+        movements: {
+          create: movements.map((movement) => ({
+            name: movement.name,
+            sets: {
+              create: movement.sets
+                .filter((s) => Number.isInteger(s.setNumber))
+                .map((s) => ({
+                  weight: s.weight,
+                  reps: s.reps,
+                  setNumber: s.setNumber,
+                })),
+            },
             dropsets: {
               create: movement.sets
                 .filter((s) => !Number.isInteger(s.setNumber))
@@ -47,7 +76,7 @@ export async function POST(req: Request) {
         },
       },
     });
-
+    
     return NextResponse.json(
       { message: "Workout logged successfully!" },
       { status: 201 }
