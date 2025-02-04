@@ -20,10 +20,8 @@ export async function POST(req: Request) {
       update: {
         notes,
         tags: tag,
-        // For nested relations, you might need additional logic.
-        // For example, you could delete all existing movements and create new ones:
         movements: {
-          deleteMany: {}, // delete existing movements for this log
+          deleteMany: {},
           create: movements.map((movement) => ({
             name: movement.name,
             sets: {
