@@ -54,7 +54,7 @@ const MovementComponent = ({ id, onDelete }: MovementComponentProps) => {
   return (
     <div
       ref={containerRef}
-      className="flex flex-col text-xl mb-2 w-min focus:outline-none relative"
+      className="flex flex-col text-xl mb-2 w-min focus:outline-none relative outline-none"
       tabIndex={0}
       onFocus={() => setIsFocused(true)}
       onBlur={(e) => {
@@ -100,7 +100,7 @@ const MovementComponent = ({ id, onDelete }: MovementComponentProps) => {
               e.preventDefault();
               addSet();
             }}
-            className="border rounded-full w-3/5 px-2 my-2 hover:bg-gray-200 duration-300 ease-in-out"
+            className="border rounded-full w-3/5 px-2 my-2 hover:bg-gray-200 duration-300 ease-in-out outline-none"
           >
             add set
           </button>
@@ -109,7 +109,7 @@ const MovementComponent = ({ id, onDelete }: MovementComponentProps) => {
               e.preventDefault();
               addDropSet();
             }}
-            className="w-2/5 border rounded-full px-2 my-2 hover:bg-gray-200 duration-300 ease-in-out"
+            className="w-2/5 border rounded-full px-2 my-2 hover:bg-gray-200 duration-300 ease-in-out outline-none"
           >
             add dropset
           </button>

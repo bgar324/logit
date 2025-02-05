@@ -18,7 +18,7 @@ const CommentBox = ({ onClose, onSave, onDelete }: { onClose: () => void; onSave
   };
 
   return (
-    <div className="min-w-48 w-auto h-10 border rounded-full flex flex-row py-3 px-2 items-center justify-between">
+    <div className="min-w-48 w-auto h-10 border rounded-full flex flex-row py-3 px-2 items-center justify-between outline-none">
       <input
         type="text"
         placeholder="any notes?"

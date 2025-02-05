@@ -19,7 +19,6 @@ const SetComponent: React.FC<SetComponentProps> = ({ setNumber, onDelete }) => {
     setter: React.Dispatch<React.SetStateAction<string>>
   ) => {
     const value = e.target.value;
-    // Allow only numbers and one decimal point
     if (/^\d*\.?\d*$/.test(value)) {
       setter(value);
     }
@@ -27,11 +26,10 @@ const SetComponent: React.FC<SetComponentProps> = ({ setNumber, onDelete }) => {
 
   return (
     <div
-      className="flex flex-col pl-5"
+      className="flex flex-col pl-5 outline-none"
       tabIndex={0}
       onFocus={() => setIsFocused(true)}
       onBlur={(e) => {
-        // Only clear focus if the new focused element is outside this container
         if (!e.currentTarget.contains(e.relatedTarget as Node)) {
           setIsFocused(false);
         }

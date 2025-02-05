@@ -55,13 +55,13 @@ export default function LogPage() {
   };
 
   const [logButtonText, setLogButtonText] = useState("log");
-  const [isLogging, setIsLogging] = useState(false); // Prevent multiple clicks
+  const [isLogging, setIsLogging] = useState(false);
 
   const handleLogWorkout = async () => {
-    if (isLogging) return; // Prevent spamming clicks
+    if (isLogging) return;
 
     setIsLogging(true);
-    setLogButtonText("logging..."); // Show loading state
+    setLogButtonText("logging...");
 
     const workoutData = {
       formattedDate,
@@ -94,7 +94,7 @@ export default function LogPage() {
         setLogButtonText("logged!");
       } else {
         console.error("Failed to log workout");
-        setLogButtonText("log ❌"); // Indicate failure
+        setLogButtonText("log ❌");
       }
     } catch (error) {
       console.error("Error logging workout:", error);
@@ -113,7 +113,7 @@ export default function LogPage() {
               {formattedDate}
             </h1>
             {!savedComment && !showCommentBox && (
-              <button onClick={() => setShowCommentBox(true)}>
+              <button onClick={() => setShowCommentBox(true)} className =  "outline-none">
                 <FontAwesomeIcon
                   icon={faComment}
                   className="text-xl hover:text-green-600 ease-in-out duration-300"
@@ -139,11 +139,11 @@ export default function LogPage() {
 
           <div>
             <button
-              className={`border rounded-full mx-0 w-full px-4 py-2 my-2 text-md duration-300 ease-in-out 
-    ${isLogging ? "bg-gray-300 cursor-not-allowed" : "hover:bg-green-200"}
+              className={`border rounded-full mx-0 w-full px-4 py-2 my-2 text-md duration-300 ease-in-out outline-none
+    ${isLogging ? "bg-gray-300 cursor-not-allowed " : "hover:bg-green-200"}
   `}
               onClick={handleLogWorkout}
-              disabled={isLogging} // Prevent spam clicks
+              disabled={isLogging}
             >
               {logButtonText}
             </button>
@@ -160,7 +160,7 @@ export default function LogPage() {
             </span>
           ) : (
             <button
-              className="border rounded-full w-10 px-2 hover:bg-gray-200 duration-300 ease-in-out focus:bg-gray-200"
+              className="border rounded-full w-10 px-2 hover:bg-gray-200 duration-300 ease-in-out focus:bg-gray-200 outline-none"
               onClick={() => setShowTagFilter(true)}
             >
               +
@@ -185,7 +185,7 @@ export default function LogPage() {
           ))}
         </div>
         <button
-          className="border rounded-full flex items-center justify-center mx-auto w-40 px-2 my-4 hover:bg-gray-200 duration-300 ease-in-out text-md"
+          className="border rounded-full flex items-center justify-center mx-auto w-40 px-2 my-4 hover:bg-gray-200 duration-300 ease-in-out text-md outline-none"
           onMouseDown={(e) => {
             e.preventDefault();
             addMovement();
@@ -203,8 +203,6 @@ export default function LogPage() {
           <li>
             allow to find pr's (n movement, k sets = n pr sets) PER workout
           </li>
-          <li>adding tags</li>
-          <li>fix the weird thing thats happening with adding movements and the layers</li>
         </ol>
       </div>
     </div>

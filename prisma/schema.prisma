@@ -49,3 +49,8 @@ model WorkoutGlobal {
   bestReps    Float
   lastUpdated DateTime @updatedAt
 }
+
+model Tag {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+}

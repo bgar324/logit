@@ -15,7 +15,7 @@
     font-family: Inter, system-ui, sans-serif;
   }
   ::selection {
-    @apply bg-highlightColor text-inherit; /* Change colors as needed */
+    @apply bg-highlightColor text-inherit;
   }
 }
 
