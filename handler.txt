@@ -34,3 +34,8 @@ button thing
     * fix tags
     * fix data sent
     * fix tags not working, um. cant do more than 1 tag
+
+    plcaeholder has a underlinebu\
+
+    when u start typign
+    

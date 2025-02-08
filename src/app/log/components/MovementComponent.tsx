@@ -71,7 +71,7 @@ const MovementComponent = ({ id, onDelete }: MovementComponentProps) => {
           spellCheck="false"
           id={`movement-${id}`}
           placeholder="movement"
-          className="bg-transparent focus:outline-none placeholder:underline placeholder:underline-offset-4 text-gray-800 placeholder:gray-800 underline underline-offset-4"
+          className="bg-transparent focus:outline-none placeholder:underline placeholder:underline-offset-4 text-gray-800 placeholder:gray-800 hover:underline hover:underline-offset-4"
         />
         {isFocused && (
           <FontAwesomeIcon
