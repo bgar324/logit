@@ -1,93 +1,179 @@
 "use client";
 
-import React, { useState } from "react";
-import MovementComponent from "./components/MovementComponent";
-import TagFilter from "./components/TagFilter";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-regular-svg-icons";
-import CommentBox from "./components/CommentBox";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "tailwindcss/tailwind.css";
+import MovementComponent from "./components/MovementComponent";
+import TagFilter from "./components/TagFilter";
+import CommentBox from "./components/CommentBox";
+import Spinner from "./components/Spinner";
+
+type SetData = {
+  weight: number;
+  reps: number;
+  setNumber: number; 
+};
+
+type MovementData = {
+  id: string; 
+  name: string;
+  sets: SetData[]; 
+};
+
+type WorkoutData = {
+  formattedDate: string;
+  notes: string; 
+  tag: string;
+  movements: MovementData[];
+};
 
 export default function LogPage() {
+  const searchParams = useSearchParams();
+  const dateParam = searchParams.get("date"); 
+
   const today = new Date();
-  const formattedDate = new Intl.DateTimeFormat("en-US", {
+  const defaultDate = new Intl.DateTimeFormat("en-US", {
     month: "long",
     day: "numeric",
   })
     .format(today)
     .toLowerCase();
 
-  const [movements, setMovements] = useState<number[]>([1]);
-  const [movementCount, setMovementCount] = useState(2);
-
-  const addMovement = () => {
-    setMovements((prev) => [...prev, movementCount]);
-    setMovementCount((prev) => prev + 1);
-  };
+  const [workoutData, setWorkoutData] = useState<WorkoutData>({
+    formattedDate: dateParam ?? defaultDate,
+    notes: "",
+    tag: "",
+    movements: [
+      {
+        id: crypto.randomUUID(),
+        name: "",
+        sets: [
+          { weight: 0, reps: 0, setNumber: 1 },
+        ],
+      },
+    ],
+  });
 
   const [showTagFilter, setShowTagFilter] = useState(false);
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [showCommentBox, setShowCommentBox] = useState(false);
-  const [savedComment, setSavedComment] = useState<string | null>(null);
+  const [logButtonText, setLogButtonText] = useState("log");
+  const [isLogging, setIsLogging] = useState(false);
+  const [isLoading, setIsLoading] = useState(!!dateParam);
+
+  useEffect(() => {
+    if (!dateParam) return;
+
+    setIsLoading(true);
+
+    (async () => {
+      try {
+        const res = await fetch(
+          `/api/workout?formattedDate=${encodeURIComponent(dateParam)}`
+        );
+        if (res.ok) {
+          const { workout } = await res.json();
+          if (workout) {
+            const updatedMovements = workout.movements.map((mov: any) => {
+              const allSets = [...mov.sets, ...mov.dropsets].sort(
+                (a: any, b: any) => a.setNumber - b.setNumber
+              );
+              return {
+                id: mov.id,
+                name: mov.name,
+                sets: allSets,
+              };
+            });
+
+            setWorkoutData({
+              formattedDate: workout.formattedDate,
+              notes: workout.notes ?? "",
+              tag: workout.tags ?? "",
+              movements: updatedMovements,
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching workout:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
+  }, [dateParam]);
+
+  const addMovement = () => {
+    setWorkoutData((prev) => ({
+      ...prev,
+      movements: [
+        ...prev.movements,
+        {
+          id: crypto.randomUUID(),
+          name: "",
+          sets: [{ weight: 0, reps: 0, setNumber: 1 }],
+        },
+      ],
+    }));
+  };
+
+  const updateMovement = (index: number, updatedMov: MovementData) => {
+    const newMovements = [...workoutData.movements];
+    newMovements[index] = updatedMov;
+    setWorkoutData({ ...workoutData, movements: newMovements });
+  };
+
+  const deleteMovement = (index: number) => {
+    if (workoutData.movements.length <= 1) return;
+    setWorkoutData((prev) => ({
+      ...prev,
+      movements: prev.movements.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleTagSelect = (tag: string) => {
+    setWorkoutData((prev) => ({ ...prev, tag }));
+    setShowTagFilter(false);
+  };
 
   const handleSaveComment = (comment: string) => {
     if (comment.trim()) {
-      setSavedComment(comment);
+      setWorkoutData((prev) => ({ ...prev, notes: comment }));
       setShowCommentBox(false);
     }
   };
 
   const handleDeleteComment = () => {
-    setSavedComment(null);
+    setWorkoutData((prev) => ({ ...prev, notes: "" }));
     setShowCommentBox(false);
   };
 
-  const handleTagSelect = (tag: string) => {
-    setSelectedTag(tag);
-    setShowTagFilter(false);
-  };
-
-  const deleteMovement = (id: number) => {
-    if (movements.length > 1) {
-      setMovements((prev) => prev.filter((movId) => movId !== id));
-    }
-  };
-
-  const [logButtonText, setLogButtonText] = useState("log");
-  const [isLogging, setIsLogging] = useState(false);
-
   const handleLogWorkout = async () => {
     if (isLogging) return;
-
     setIsLogging(true);
     setLogButtonText("logging...");
-
-    const workoutData = {
-      formattedDate,
-      notes: savedComment,
-      tag: selectedTag || "",
-      movements: movements.map((id) => ({
-        name:
-          (document.getElementById(`movement-${id}`) as HTMLInputElement)
-            ?.value || "",
-        sets: Array.from(document.querySelectorAll(`.movement-${id}-set`)).map(
-          (setEl: any) => ({
-            weight: parseFloat(setEl.querySelector(".weight")?.value) || 0,
-            reps: parseFloat(setEl.querySelector(".reps")?.value) || 0,
-            setNumber: parseFloat(setEl.getAttribute("data-set-number")) || 0,
-          })
-        ),
-      })),
-    };
-
     try {
+      const movementsToSend = workoutData.movements.map((mov) => ({
+        name: mov.name,
+        sets: mov.sets.map((s) => ({
+          weight: s.weight,
+          reps: s.reps,
+          setNumber: s.setNumber,
+        })),
+      }));
+
+      const payload = {
+        formattedDate: workoutData.formattedDate,
+        notes: workoutData.notes,
+        tag: workoutData.tag,
+        movements: movementsToSend,
+      };
+
       const response = await fetch("/api/log-workout", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(workoutData),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -104,19 +190,33 @@ export default function LogPage() {
     }
   };
 
+  if (isLoading) {
+    return <Spinner />;
+  }
+
   return (
     <div className="min-h-screen flex justify-center">
       <div className="flex flex-col w-full max-w-xl pt-32 px-5 pb-5">
+        <a
+          href="/"
+          className="text-slate-500 hover:text-black duration-300 ease-in-out text-xs sm:text-sm md:text-base"
+        >
+          <FontAwesomeIcon icon={faArrowLeft} />
+        </a>
         <div className="flex flex-row items-center justify-between">
           <div className="flex flex-row items-center space-x-3">
-            <h1 className="text-2xl underline underline-offset-4">
-              {formattedDate}
+            <h1 className="text-lg sm:text-xl md:text-2xl underline underline-offset-4">
+              {workoutData.formattedDate}
             </h1>
-            {!savedComment && !showCommentBox && (
-              <button onClick={() => setShowCommentBox(true)} className =  "outline-none">
+
+            {!workoutData.notes && !showCommentBox && (
+              <button
+                onClick={() => setShowCommentBox(true)}
+                className="outline-none"
+              >
                 <FontAwesomeIcon
                   icon={faComment}
-                  className="text-xl hover:text-green-600 ease-in-out duration-300"
+                  className="text-base sm:text-lg md:text-xl hover:text-green-600 ease-in-out duration-300"
                 />
               </button>
             )}
@@ -127,21 +227,24 @@ export default function LogPage() {
                 onDelete={handleDeleteComment}
               />
             )}
-            {savedComment && !showCommentBox && (
+            {workoutData.notes && !showCommentBox && (
               <div
                 className="border rounded-full px-3 py-2 bg-gray-100 text-gray-800 cursor-pointer"
                 onClick={() => setShowCommentBox(true)}
               >
-                {savedComment}
+                {workoutData.notes}
               </div>
             )}
           </div>
 
           <div>
             <button
-              className={`border rounded-full mx-0 w-full px-4 py-2 my-2 text-md duration-300 ease-in-out outline-none
-    ${isLogging ? "bg-gray-300 cursor-not-allowed " : "hover:bg-green-200"}
-  `}
+              className={`border rounded-full mx-0 w-full px-4 py-2 my-2 text-sm md:text-base duration-300 ease-in-out outline-none
+                ${
+                  isLogging
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "hover:bg-green-200"
+                }`}
               onClick={handleLogWorkout}
               disabled={isLogging}
             >
@@ -151,23 +254,22 @@ export default function LogPage() {
         </div>
 
         <div className="flex items-center space-x-2">
-          {selectedTag ? (
+          {workoutData.tag ? (
             <span
-              className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm cursor-pointer"
+              className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs md:text-sm cursor-pointer"
               onClick={() => setShowTagFilter(true)}
             >
-              {selectedTag}
+              {workoutData.tag}
             </span>
           ) : (
             <button
-              className="border rounded-full w-10 px-2 hover:bg-gray-200 duration-300 ease-in-out focus:bg-gray-200 outline-none"
+              className="text-xs md:text-sm border rounded-full w-10 px-2 hover:bg-gray-200 duration-300 ease-in-out focus:bg-gray-200 outline-none"
               onClick={() => setShowTagFilter(true)}
             >
               +
             </button>
           )}
         </div>
-
         {showTagFilter && (
           <TagFilter
             onClose={() => setShowTagFilter(false)}
@@ -176,16 +278,18 @@ export default function LogPage() {
         )}
 
         <div className="mt-4">
-          {movements.map((id) => (
+          {workoutData.movements.map((movement, index) => (
             <MovementComponent
-              key={id}
-              id={id}
-              onDelete={() => deleteMovement(id)}
+              key={movement.id}
+              movement={movement}
+              onChange={(updated) => updateMovement(index, updated)}
+              onDelete={() => deleteMovement(index)}
             />
           ))}
         </div>
+
         <button
-          className="border rounded-full flex items-center justify-center mx-auto w-40 px-2 my-4 hover:bg-gray-200 duration-300 ease-in-out text-md outline-none"
+          className="border rounded-full flex items-center justify-center mx-auto w-40 px-2 my-4 hover:bg-gray-200 duration-300 ease-in-out text-sm md:text-base outline-none"
           onMouseDown={(e) => {
             e.preventDefault();
             addMovement();
@@ -194,17 +298,16 @@ export default function LogPage() {
           add movement
         </button>
       </div>
-      {/* todo, DON'T TOUCH! */}
-      <div className="absolute right-20 top-20 flex flex-col text-purple-400">
+      {/* <div className="absolute right-20 top-20 flex flex-col text-purple-400">
         <h1 className="underline">todo</h1>
         <ol className="pl-4">
-          <li>same date api handling</li>
-          <li>fix database col / row parameters</li>
           <li>
             allow to find pr's (n movement, k sets = n pr sets) PER workout
           </li>
+          <li>fix issue where loading a page loads a duplicate of the movement but in a dropdown</li>
+          <li>work on responsiveness</li>
         </ol>
-      </div>
+      </div> */}
     </div>
   );
 }

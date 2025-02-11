@@ -1,4 +1,4 @@
-generator client {
+ generator client {
   provider = "prisma-client-js"
 }
 
@@ -51,6 +51,11 @@ model WorkoutGlobal {
 }
 
 model Tag {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+}
+
+model Exercise {
   id   Int    @id @default(autoincrement())
   name String @unique
 }

@@ -8,6 +8,9 @@ export default {
   ],
   theme: {
     extend: {
+      // fontSize : {
+      //   base : "1.75rem",
+      // }
       caretShape: {
         block: 'block',
       },

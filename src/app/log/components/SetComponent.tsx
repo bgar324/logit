@@ -4,24 +4,29 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 
-interface SetComponentProps {
+type SetData = {
+  weight: number;
+  reps: number;
   setNumber: number;
+};
+
+interface SetComponentProps {
+  setData: SetData;
   onDelete: () => void;
+  onChange: (updatedSet: SetData) => void;
 }
 
-const SetComponent: React.FC<SetComponentProps> = ({ setNumber, onDelete }) => {
-  const [weight, setWeight] = useState("");
-  const [reps, setReps] = useState("");
+const SetComponent: React.FC<SetComponentProps> = ({ setData, onDelete, onChange }) => {
   const [isFocused, setIsFocused] = useState(false);
 
-  const handleNumberChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setter: React.Dispatch<React.SetStateAction<string>>
-  ) => {
-    const value = e.target.value;
-    if (/^\d*\.?\d*$/.test(value)) {
-      setter(value);
-    }
+  const handleWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseFloat(e.target.value) || 0;
+    onChange({ ...setData, weight: val });
+  };
+
+  const handleRepsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseFloat(e.target.value) || 0;
+    onChange({ ...setData, reps: val });
   };
 
   return (
@@ -36,28 +41,28 @@ const SetComponent: React.FC<SetComponentProps> = ({ setNumber, onDelete }) => {
       }}
     >
       <div className="flex flex-row justify-between items-center w-full">
-        <span className="w-10 pr-5 bg-transparent text-gray-500 text-lg">
-          {setNumber}
+        <span className="w-10 pr-5 bg-transparent text-gray-500 text-sm sm:text-base md:text-lg">
+          {setData.setNumber}
         </span>
         <input
           type="text"
-          value={weight}
-          onChange={(e) => handleNumberChange(e, setWeight)}
+          value={setData.weight || ""}
+          onChange={handleWeightChange}
           placeholder="weight"
-          className="weight bg-transparent focus:outline-none text-gray-700 placeholder:gray-800 text-lg"
+          className="weight bg-transparent focus:outline-none text-gray-700 placeholder:gray-800 text-sm sm:text-base md:text-lg"
         />
         <input
           type="text"
-          value={reps}
-          onChange={(e) => handleNumberChange(e, setReps)}
+          value={setData.reps || ""}
+          onChange={handleRepsChange}
           placeholder="reps"
-          className="reps bg-transparent focus:outline-none text-gray-700 placeholder:gray-800 text-lg"
+          className="reps bg-transparent focus:outline-none text-gray-700 placeholder:gray-800 text-sm sm:text-base md:text-lg"
         />
         <FontAwesomeIcon
           icon={faTrashCan}
-          className={`text-gray-400 hover:text-red-500 hover:duration-300 ease-in-out hover:cursor-pointer text-lg 
-    ${setNumber === 1 || !isFocused ? "invisible" : "visible"}`}
-          onClick={setNumber > 1 ? onDelete : undefined}
+          className={`text-gray-400 hover:text-red-500 hover:duration-300 ease-in-out hover:cursor-pointer text-sm sm:text-base md:text-lg 
+            ${setData.setNumber === 1 || !isFocused ? "invisible" : "visible"}`}
+          onClick={setData.setNumber > 1 ? onDelete : undefined}
         />
       </div>
     </div>

@@ -4,17 +4,17 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import { faCheckCircle, faXmarkCircle } from "@fortawesome/free-regular-svg-icons";
 
 const CommentBox = ({ onClose, onSave, onDelete }: { onClose: () => void; onSave: (comment: string) => void; onDelete: () => void }) => {
-  const [comment, setComment] = useState(""); // Holds input value
+  const [comment, setComment] = useState("");
 
   const handleSave = () => {
     if (comment.trim()) {
-      onSave(comment); // Save comment to parent
+      onSave(comment);
     }
   };
 
   const handleDelete = () => {
-    setComment(""); // Clear input
-    onDelete(); // Notify parent to show comment icon
+    setComment("");
+    onDelete();
   };
 
   return (
@@ -24,14 +24,14 @@ const CommentBox = ({ onClose, onSave, onDelete }: { onClose: () => void; onSave
         placeholder="any notes?"
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        className="w-36 border rounded-full bg-gray-200 focus:outline-none pl-2"
+        className="w-36 border rounded-full bg-gray-200 focus:outline-none pl-2 text-sm md:text-base"
       />
       {comment.length > 0 && (
-        <button className="text-green-600 ml-2" onClick={handleSave}>
+        <button className="text-green-600 ml-2 text-sm sm:text-base md:text-lg" onClick={handleSave}>
           <FontAwesomeIcon icon={faCheckCircle} />
         </button>
       )}
-      <button className="text-gray-700 ml-2" onClick={handleDelete}>
+      <button className="text-gray-700 ml-2 text-sm sm:text-base md:text-lg" onClick={handleDelete}>
         <FontAwesomeIcon icon={faXmarkCircle} />
       </button>
     </div>

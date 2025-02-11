@@ -13,25 +13,21 @@ interface TagFilterProps {
 }
 
 const TagFilter = ({ onClose, onTagSelect }: TagFilterProps) => {
-  const [allTags, setAllTags] = useState<string[]>([]); // Full list of tags
-  const [filterValue, setFilterValue] = useState(""); // For filtering
+  const [allTags, setAllTags] = useState<string[]>([]); 
+  const [filterValue, setFilterValue] = useState(""); 
   const [showNewTagInput, setShowNewTagInput] = useState(false);
   const [newTagValue, setNewTagValue] = useState("");
 
-  // Fetch existing tags from DB (optional). Or you can skip this if you have your own approach.
   useEffect(() => {
-    // If you prefer a static list, you can remove this fetch call and just do setAllTags([ 'push', 'pull', ... ])
     const fetchTags = async () => {
       try {
         const res = await fetch("/api/tags", { method: "GET" });
         if (res.ok) {
           const data = await res.json();
-          // data.tags is an array of Tag objects; map them to strings
           setAllTags(data.tags.map((t: { name: string }) => t.name));
         }
       } catch (err) {
         console.error("Error fetching tags:", err);
-        // fallback to a static list if desired
         setAllTags(["push", "pull", "legs", "arms", "chest and back"]);
       }
     };
@@ -41,13 +37,11 @@ const TagFilter = ({ onClose, onTagSelect }: TagFilterProps) => {
 
   const handleDeleteTag = async (tagName: string) => {
     try {
-      // Delete from DB
       const res = await fetch(`/api/tags?name=${encodeURIComponent(tagName)}`, {
         method: "DELETE",
       });
 
       if (res.ok) {
-        // Remove from local state
         setAllTags((prev) => prev.filter((t) => t !== tagName));
       } else {
         console.error("Failed to delete tag:", await res.text());
@@ -57,12 +51,10 @@ const TagFilter = ({ onClose, onTagSelect }: TagFilterProps) => {
     }
   };
 
-  // Filter the tags based on input
   const filteredTags = allTags.filter((tag) =>
     tag.toLowerCase().includes(filterValue.toLowerCase())
   );
 
-  // POST new tag to server
   const handleCreateNewTag = async () => {
     const trimmed = newTagValue.trim();
     if (!trimmed) return;
@@ -78,18 +70,14 @@ const TagFilter = ({ onClose, onTagSelect }: TagFilterProps) => {
 
       if (res.ok) {
         const data = await res.json();
-        // data.tag.name is the newly-created (or existing) tag
         const createdTag = data.tag.name;
 
-        // Add to local state if it doesn’t already exist
         setAllTags((prev) =>
           prev.includes(createdTag) ? prev : [...prev, createdTag]
         );
 
-        // If you want to auto-select it, call onTagSelect here or not
         onTagSelect(createdTag);
 
-        // Clear and hide the input
         setNewTagValue("");
         setShowNewTagInput(false);
       } else {
@@ -103,18 +91,15 @@ const TagFilter = ({ onClose, onTagSelect }: TagFilterProps) => {
   return (
     <div className="flex flex-row w-80 bg-white shadow-md rounded-lg p-3 absolute mt-24 z-50">
       <div className="flex flex-col w-full">
-        <div className="flex items-center justify-between gap-2">
-          {/* Filter input */}
+        <div className="flex items-center justify-between gap-2 text-3xl">
           <input
             value={filterValue}
             onChange={(e) => setFilterValue(e.target.value)}
             placeholder="type to filter"
-            className="rounded-lg bg-gray-200 w-56 p-2 focus:outline-none"
+            className="rounded-lg bg-gray-200 w-56 p-2 focus:outline-none text-xs sm:text-sm md:text-base"
           />
-
-          {/* Plus button to show the "new tag" input */}
           <button
-            className="rounded-full bg-green-100 hover:bg-green-200 duration-300 ease-in-out px-3 pb-[2px] text-lg mr-5"
+            className="rounded-full bg-green-100 hover:bg-green-200 duration-300 ease-in-out px-3 pb-[2px] mr-5 text-sm sm:text-md md:text-lg"
             onClick={() => setShowNewTagInput(true)}
           >
             +
@@ -122,24 +107,24 @@ const TagFilter = ({ onClose, onTagSelect }: TagFilterProps) => {
         </div>
 
         {showNewTagInput && (
-          <div className="w-0 h-10 rounded-full flex flex-row items-center justify-between mt-2">
+          <div className="w-0 h-10 rounded-full flex flex-row items-center justify-between mt-2 ">
             <input
               type="text"
               placeholder="new tag..."
               value={newTagValue}
               onChange={(e) => setNewTagValue(e.target.value)}
-              className="w-36 border rounded-full bg-gray-200 focus:outline-none pl-2 outline-none"
+              className="w-36 border rounded-full bg-gray-200 focus:outline-none pl-2 outline-none text-xs sm:text-sm md:text-base"
             />
             {newTagValue.trim().length > 0 && (
               <button
-                className="text-green-600 ml-2"
+                className="text-green-600 ml-2 text-xs sm:text-sm md:text-base"
                 onClick={handleCreateNewTag}
               >
                 <FontAwesomeIcon icon={faCheckCircle} />
               </button>
             )}
             <button
-              className="text-gray-700 ml-2"
+              className="text-gray-700 ml-2 text-xs sm:text-sm md:text-base"
               onClick={() => {
                 setShowNewTagInput(false);
                 setNewTagValue("");
@@ -155,8 +140,8 @@ const TagFilter = ({ onClose, onTagSelect }: TagFilterProps) => {
             <div
               key={tag}
               className="relative group flex items-center 
-                 bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm 
-                 whitespace-nowrap hover:cursor-pointer min-w-12 w-auto"
+                 bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-xs md:text-sm 
+                 whitespace-nowrap hover:cursor-pointer min-w-11 w-auto"
             >
               <span onClick={() => onTagSelect(tag)}>{tag}</span>
 
@@ -174,10 +159,11 @@ const TagFilter = ({ onClose, onTagSelect }: TagFilterProps) => {
                 transition-none
 
                 group-hover:transition-all
-                group-hover:duration-300
+                group-hover:duration-200
                 group-hover:ease-in-out
                 text-red-600
-                hover:text-red-800"
+                hover:text-red-800
+                text-xs sm:text-sm md:text-base"
               >
                 <FontAwesomeIcon icon={faXmarkCircle} />
               </button>
@@ -187,7 +173,7 @@ const TagFilter = ({ onClose, onTagSelect }: TagFilterProps) => {
       </div>
 
       <button
-        className="absolute top-2 right-2 text-gray-700 hover:text-gray-600"
+        className="absolute top-2 right-2 text-gray-700 hover:text-gray-600 text-xs sm:text-sm md:text-base"
         onClick={onClose}
       >
         <FontAwesomeIcon icon={faXmarkCircle} />
