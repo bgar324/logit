@@ -57,7 +57,6 @@ export default function ProgressionPage() {
 
   return (
     <div className="flex">
-      {/* Sidebar: List of Exercises */}
       <div className="w-1/5 border-r p-4 h-screen overflow-y-auto text-xs sm:text-sm md:text-base">
         <div className="flex flex-row gap-3">
           <a
@@ -89,7 +88,7 @@ export default function ProgressionPage() {
         {selectedExercise ? (
           <>
             <h3 className = "p-4">
-              <span className="underline underline-offset-4">
+              <span className="font-medium underline underline-offset-4">
                 {selectedExercise.name}'s
               </span>{" "}
               progressive overload
@@ -116,10 +115,10 @@ export default function ProgressionPage() {
                       return [
                         <div key="tooltip-content" className="text-center">
                           <div>
-                            <strong>Weight:</strong> {value}
+                            <span className = "underline underline-offset-2">weight</span>: {value}
                           </div>
                           <div>
-                            <strong>Reps:</strong> {repCount}
+                            <span className = "underline underline-offset-2">reps</span>: {repCount}
                           </div>
                         </div>,
                       ];
@@ -129,11 +128,11 @@ export default function ProgressionPage() {
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <p>No PR data available for this exercise.</p>
+              <p>no PR data available for this exercise.</p>
             )}
           </>
         ) : (
-          <p>Please select an exercise from the sidebar.</p>
+          <p>please select an exercise from the sidebar</p>
         )}
       </div>
     </div>
