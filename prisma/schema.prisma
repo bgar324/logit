@@ -1,4 +1,4 @@
- generator client {
+generator client {
   provider = "prisma-client-js"
 }
 
@@ -8,20 +8,23 @@ datasource db {
 }
 
 model WorkoutLog {
-  id                 String     @id @default(uuid())
-  formattedDate      String?    @unique
-  notes              String?
-  tags               String? 
-  movements          Movement[]
+  id            String     @id @default(uuid())
+  formattedDate String?    @unique
+  notes         String?
+  tags          String?
+  movements     Movement[]
 }
 
 model Movement {
-  id        String     @id @default(uuid())
-  name      String
-  log       WorkoutLog @relation(fields: [logId], references: [id], onDelete: Cascade)
-  logId     String
-  sets      Set[]
-  dropsets  Dropset[]  // Added field for the relation to Dropset
+  id         String     @id @default(uuid())
+  name       String
+  // Optional link to an Exercise record for data consistency
+  exerciseId Int?
+  exercise   Exercise?  @relation(fields: [exerciseId], references: [id])
+  log        WorkoutLog @relation(fields: [logId], references: [id], onDelete: Cascade)
+  logId      String
+  sets       Set[]
+  dropsets   Dropset[]
 }
 
 model Set {
@@ -30,7 +33,7 @@ model Set {
   movementId String
   weight     Float
   reps       Float
-  setNumber  Float     // added field for ordering
+  setNumber  Float
 }
 
 model Dropset {
@@ -42,12 +45,12 @@ model Dropset {
   setNumber  Float
 }
 
-model WorkoutGlobal {
-  id          String   @id @default(uuid())
-  movement    String   @unique
-  bestWeight  Float
-  bestReps    Float
-  lastUpdated DateTime @updatedAt
+model ExercisePR {
+  id           String   @id @default(uuid())
+  exerciseName String
+  bestWeight   Float
+  bestReps     Float
+  workoutDate  DateTime
 }
 
 model Tag {
@@ -56,6 +59,7 @@ model Tag {
 }
 
 model Exercise {
-  id   Int    @id @default(autoincrement())
-  name String @unique
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  movements  Movement[]
 }
