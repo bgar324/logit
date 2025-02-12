@@ -196,7 +196,7 @@ export default function LogPage() {
 
   return (
     <div className="min-h-screen flex justify-center">
-      <div className="flex flex-col w-full max-w-xl pt-32 px-5 pb-5">
+      <div className="flex flex-col w-full max-w-xl pt-5 sm:pt-16 md:pt-32 px-5 pb-5">
         <a
           href="/"
           className="text-slate-500 hover:text-black duration-300 ease-in-out text-xs sm:text-sm md:text-base"
