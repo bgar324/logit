@@ -57,8 +57,8 @@ export default function ProgressionPage() {
 
   return (
     <div className="flex">
-      <div className="w-1/5 border-r p-4 h-screen overflow-y-auto text-xs sm:text-sm md:text-base">
-        <div className="flex flex-row gap-3">
+      <div className="w-1/5 border-r px-4 h-screen overflow-y-auto text-xs sm:text-sm md:text-base">
+        <div className="flex flex-row gap-3 sticky bg-baseBg z-50 top-0 w-auto py-4 border-b">
           <a
             href="/"
             className="text-slate-500 hover:text-black duration-300 ease-in-out pt-[0.5px]"
