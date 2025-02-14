@@ -5,7 +5,7 @@ import Calendar from "react-calendar";
 import Spinner from "./log/components/Spinner";
 import { useRouter } from "next/navigation";
 import "react-calendar/dist/Calendar.css";
-import './globals.css'
+import "./globals.css";
 
 export default function Home() {
   const [value, setValue] = useState<Date | null>(new Date());
@@ -49,8 +49,8 @@ export default function Home() {
             // i have no idea why this works but it does
             onChange={handleDateChange}
             selectRange={false}
-            showNeighboringMonth={false} 
-            calendarType= {"gregory"}
+            showNeighboringMonth={false}
+            calendarType={"gregory"}
           />
         </div>
 
