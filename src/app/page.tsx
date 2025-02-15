@@ -12,8 +12,7 @@ export default function Home() {
   const router = useRouter();
 
   const handleDateChange = (
-    dateValue: Date | Date[] | null,
-    event: React.MouseEvent<HTMLButtonElement> | undefined
+    dateValue: Date | Date[] | null
   ) => {
     if (dateValue instanceof Date) {
       setValue(dateValue);
@@ -46,9 +45,7 @@ export default function Home() {
         <div>
           <Calendar
             value={value}
-            // i have no idea why this works but it does
-            onChange={handleDateChange}
-            selectRange={false}
+            onChange={(value) => handleDateChange(value as Date | Date[] | null)}
             showNeighboringMonth={false}
             calendarType={"gregory"}
           />
@@ -57,14 +54,14 @@ export default function Home() {
         <div className="flex flex-row gap-3 mx-0 justify-center items-center -mt-10">
           <a
             href={logRoute}
-            className="justify-center items-center w-auto flex border-2 rounded-xl px-2 py-1 hover:bg-highlightColor duration-300 ease-in-out"
+            className="justify-center items-center w-auto flex border-2 border-[#a1a196] rounded-xl px-2 py-1 hover:bg-highlightColor duration-300 ease-in-out"
           >
             <span>log {formattedDate}</span>
           </a>
 
           <a
             href="/analyzer"
-            className="justify-center items-center w-auto flex border-2 rounded-xl px-2 py-1 hover:bg-highlightColor duration-300 ease-in-out"
+            className="justify-center items-center w-auto flex border-2 border-[#a1a196] rounded-xl px-2 py-1 hover:bg-highlightColor duration-300 ease-in-out"
           >
             <span>analyze</span>
           </a>
