@@ -6,6 +6,7 @@ import Spinner from "./log/components/Spinner";
 import { useRouter } from "next/navigation";
 import "react-calendar/dist/Calendar.css";
 import "./globals.css";
+import Todo from "./Todo";
 
 export default function Home() {
   const [value, setValue] = useState<Date | null>(new Date());
@@ -67,6 +68,7 @@ export default function Home() {
           </a>
         </div>
       </div>
+      <Todo />
     </div>
   );
 }
