@@ -46,7 +46,7 @@ body {
   border: 1px solid #a0a096;
   border-radius: 0.75rem;
   font-family: 'Inter';
-  line-height: 1.125em;
+  line-height: 1.325em;
   padding: 0.75rem;
   /* box-shadow: 5px 2px 2px #a0a096; */
 }
@@ -80,6 +80,7 @@ input[placeholder]::placeholder {
 
 .react-calendar button {
   border: 0;
+  padding: 0;
   outline: none;
 }
 
@@ -143,18 +144,20 @@ input[placeholder]::placeholder {
 .react-calendar__year-view .react-calendar__tile,
 .react-calendar__decade-view .react-calendar__tile,
 .react-calendar__century-view .react-calendar__tile {
-  padding: 2em 0.5em;
+  /* padding: 2em 0.5em; */
 }
 
 .react-calendar__tile {
   /* top/bottom left/right */
-  max-width: 100%;
-  padding: 12px;
+  width: 100%;
   background: none;
   text-align: center;
   font: inherit;
   font-size: 0.833em;
+  @apply my-1 py-3 !important;
 }
+
+
 
 .react-calendar__tile:disabled {
   background-color: #f0f0f0;
@@ -219,6 +222,7 @@ input[placeholder]::placeholder {
 .react-calendar--selectRange .react-calendar__tile--hover {
   border-radius: 0.75rem;
   background-color: #e6e6e6;
+  @apply duration-300 ease-in-out !important;
 }
 /* 
 .react-calendar__month-view__days {
@@ -229,6 +233,17 @@ input[placeholder]::placeholder {
   text-transform: lowercase;
 }
 
+.react-calendar__tile--logged {
+  @apply bg-[#f2d1cd] text-black rounded-xl duration-300 ease-in-out !important;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.react-calendar__tile--logged:hover {
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  @apply bg-[#df9186] duration-300 ease-in-out !important;
+}
+
 abbr{
   text-transform: lowercase;
 }
+

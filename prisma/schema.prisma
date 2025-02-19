@@ -18,7 +18,6 @@ model WorkoutLog {
 model Movement {
   id         String     @id @default(uuid())
   name       String
-  // Optional link to an Exercise record for data consistency
   exerciseId Int?
   exercise   Exercise?  @relation(fields: [exerciseId], references: [id])
   log        WorkoutLog @relation(fields: [logId], references: [id], onDelete: Cascade)

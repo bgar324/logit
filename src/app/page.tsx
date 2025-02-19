@@ -1,8 +1,6 @@
 "use client";
-import RoundedBox from "./components/RoundedBox";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Calendar from "react-calendar";
-import Spinner from "./log/components/Spinner";
 import { useRouter } from "next/navigation";
 import "react-calendar/dist/Calendar.css";
 import "./globals.css";
@@ -10,7 +8,16 @@ import Todo from "./Todo";
 
 export default function Home() {
   const [value, setValue] = useState<Date | null>(new Date());
+  const [loggedDates, setLoggedDates] = useState<string[]>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    // 1. Fetch all workout dates once on mount
+    fetch("/api/all-logged-dates")
+      .then((res) => res.json())
+      .then((data) => setLoggedDates(data.dates)) // e.g. ["2025-02-01", "2025-02-05"]
+      .catch((err) => console.error("Error fetching logged dates:", err));
+  }, []);
 
   const handleDateChange = (
     dateValue: Date | Date[] | null
@@ -49,6 +56,15 @@ export default function Home() {
             onChange={(value) => handleDateChange(value as Date | Date[] | null)}
             showNeighboringMonth={false}
             calendarType={"gregory"}
+            tileClassName={({ date, view }) => {
+              if (view === "month") {
+                const dateString = date.toISOString().split("T")[0];
+                if (loggedDates.includes(dateString)) {
+                  return "react-calendar__tile--logged";
+                }
+              }
+              return null;
+            }}
           />
         </div>
 
