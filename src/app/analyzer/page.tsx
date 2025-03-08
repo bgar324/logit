@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   CartesianGrid,
   XAxis,
   YAxis,
@@ -14,6 +14,8 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "tailwindcss/tailwind.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 
 interface Exercise {
   id: number;
@@ -47,6 +49,16 @@ export default function ProgressionPage() {
   );
   const [prData, setPrData] = useState<PRRecord[]>([]);
 
+  const [collapsed, setCollapsed] = useState({
+    recent24: false,
+    threeDays: false,
+    sevenPlus: false,
+  });
+
+  const toggleSection = (section: keyof typeof collapsed) => {
+    setCollapsed((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
+
   useEffect(() => {
     fetch("/api/exercises/all")
       .then((res) => res.json())
@@ -60,10 +72,8 @@ export default function ProgressionPage() {
         const threeDays: Exercise[] = [];
         const sevenPlus: Exercise[] = [];
 
-        // 2. Group exercises by lastLogged
         exList.forEach((ex) => {
           if (!ex.lastLogged) {
-            // Treat null lastLogged as "7+ days"
             sevenPlus.push(ex);
             return;
           }
@@ -120,33 +130,60 @@ export default function ProgressionPage() {
           >
             <FontAwesomeIcon icon={faArrowLeft} />
           </a>
-          <h3 className="underline underline-offset-4">exercises</h3>
+          <h3 className="font-semibold">exercises</h3>
         </div>
 
         <div className="mt-4 ml-2">
-          <div className="flex flex-row items-center gap-2">
+          <div
+            className="flex flex-row items-center gap-2 cursor-pointer"
+            onClick={() => toggleSection("recent24")}
+          >
+            {/* Toggle icon changes depending on collapsed state */}
+            <FontAwesomeIcon
+              icon={collapsed.recent24 ? faAngleRight : faAngleDown}
+            />
             <h4 className="text-sm font-semibold text-gray-600">
               past 24 hours
             </h4>
             <hr className="flex-grow border-t border-gray-300" />
           </div>
-          <ul>{groupedExercises.recent24.map(renderExerciseItem)}</ul>
+          {!collapsed.recent24 && (
+            <ul>{groupedExercises.recent24.map(renderExerciseItem)}</ul>
+          )}
         </div>
 
+        {/* 3+ Days */}
         <div className="mt-4 ml-2">
-          <div className="flex flex-row items-center gap-2">
+          <div
+            className="flex flex-row items-center gap-2 cursor-pointer"
+            onClick={() => toggleSection("threeDays")}
+          >
+            <FontAwesomeIcon
+              icon={collapsed.threeDays ? faAngleRight : faAngleDown}
+            />
             <h4 className="text-sm font-semibold text-gray-600">3+ days</h4>
             <hr className="flex-grow border-t border-gray-300" />
           </div>
-          <ul>{groupedExercises.threeDays.map(renderExerciseItem)}</ul>
+          {!collapsed.threeDays && (
+            <ul>{groupedExercises.threeDays.map(renderExerciseItem)}</ul>
+          )}
         </div>
 
+        {/* 7+ Days */}
         <div className="mt-4 ml-2">
-          <div className="flex flex-row items-center gap-2">
+          <div
+            className="flex flex-row items-center gap-2 cursor-pointer"
+            onClick={() => toggleSection("sevenPlus")}
+          >
+            <FontAwesomeIcon
+              icon={collapsed.sevenPlus ? faAngleRight : faAngleDown}
+            />
             <h4 className="text-sm font-semibold text-gray-600">7+ days</h4>
             <hr className="flex-grow border-t border-gray-300" />
           </div>
-          <ul>{groupedExercises.sevenPlus.map(renderExerciseItem)}</ul>
+          {!collapsed.sevenPlus && (
+            <ul>{groupedExercises.sevenPlus.map(renderExerciseItem)}</ul>
+          )}
         </div>
 
         <ul className="list-none p-0 ml-4">
@@ -177,7 +214,20 @@ export default function ProgressionPage() {
             </h3>
             {prData.length > 0 ? (
               <ResponsiveContainer width="100%" height={400}>
-                <LineChart data={prData}>
+                <AreaChart data={prData}>
+                  <defs>
+                    <linearGradient
+                      id="colorWeight"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="5%" stopColor="#8884d8" stopOpacity={0.5} />
+                      <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+
                   <CartesianGrid stroke="#ccc" />
                   <XAxis
                     dataKey="workoutDate"
@@ -212,8 +262,14 @@ export default function ProgressionPage() {
                       ];
                     }}
                   />
-                  <Line type="monotone" dataKey="bestWeight" stroke="#8884d8" />
-                </LineChart>
+                  <Area
+                    type="monotone"
+                    dataKey="bestWeight"
+                    stroke="#8884d8"
+                    fill="url(#colorWeight)"
+                    dot={{ r: 3, fill: "#524f85" }}
+                  />
+                </AreaChart>
               </ResponsiveContainer>
             ) : (
               <p>no PR data available for this exercise.</p>
