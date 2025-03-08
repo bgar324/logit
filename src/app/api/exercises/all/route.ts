@@ -6,7 +6,10 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     const exercises = await prisma.exercise.findMany({
-      orderBy: { name: "asc" },
+      orderBy: [
+        { lastLogged: 'asc' },  // newest logs at the top
+        { name: 'asc' },         // tiebreak by name if needed
+      ],
     });
     return NextResponse.json({ exercises }, { status: 200 });
   } catch (error) {

@@ -15,8 +15,8 @@ export async function POST(req: Request) {
       if (trimmedName) {
         await prisma.exercise.upsert({
           where: { name: trimmedName },
-          update: {},
-          create: { name: trimmedName },
+          update: {lastLogged: new Date(),},
+          create: { name: trimmedName, lastLogged: new Date(), },
         });
       }
     }

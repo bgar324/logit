@@ -20,7 +20,7 @@ const Todo = () => {
   ];
 
   return (
-    <div className = "flex flex-col justify-center">
+    <div className = "absolute right-0 mr-6 flex flex-col justify-center">
       <span
         // onClick={() => setOpen(!isOpen)}
         className="cursor-pointer mt-3 hover:text-purple-400 duration-100 ease-in-out"

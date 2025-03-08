@@ -9,39 +9,39 @@ datasource db {
 
 model WorkoutLog {
   id            String     @id @default(uuid())
-  formattedDate String?    @unique
   notes         String?
   tags          String?
+  formattedDate String?    @unique
   movements     Movement[]
 }
 
 model Movement {
   id         String     @id @default(uuid())
   name       String
+  logId      String
   exerciseId Int?
+  dropsets   Dropset[]
   exercise   Exercise?  @relation(fields: [exerciseId], references: [id])
   log        WorkoutLog @relation(fields: [logId], references: [id], onDelete: Cascade)
-  logId      String
   sets       Set[]
-  dropsets   Dropset[]
 }
 
 model Set {
-  id         String    @id @default(uuid())
-  movement   Movement  @relation(fields: [movementId], references: [id], onDelete: Cascade)
+  id         String   @id @default(uuid())
   movementId String
   weight     Float
   reps       Float
   setNumber  Float
+  movement   Movement @relation(fields: [movementId], references: [id], onDelete: Cascade)
 }
 
 model Dropset {
-  id         String    @id @default(uuid())
-  movement   Movement  @relation(fields: [movementId], references: [id], onDelete: Cascade)
+  id         String   @id @default(uuid())
   movementId String
   weight     Float
   reps       Float
   setNumber  Float
+  movement   Movement @relation(fields: [movementId], references: [id], onDelete: Cascade)
 }
 
 model ExercisePR {
@@ -58,7 +58,8 @@ model Tag {
 }
 
 model Exercise {
-  id         Int         @id @default(autoincrement())
-  name       String      @unique
-  movements  Movement[]
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  movements Movement[]
+  lastLogged DateTime?
 }
