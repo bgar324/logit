@@ -12,10 +12,9 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    // 1. Fetch all workout dates once on mount
     fetch("/api/all-logged-dates")
       .then((res) => res.json())
-      .then((data) => setLoggedDates(data.dates)) // e.g. ["2025-02-01", "2025-02-05"]
+      .then((data) => setLoggedDates(data.dates)) 
       .catch((err) => console.error("Error fetching logged dates:", err));
   }, []);
 

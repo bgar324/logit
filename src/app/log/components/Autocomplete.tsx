@@ -56,6 +56,7 @@ export default function Autocomplete({
   const handleSelect = (value: string) => {
     setQuery(value);
     setShowDropdown(false);
+    setHasInteracted(false);
     onSelect(value);
   };
   return (

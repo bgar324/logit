@@ -10,9 +10,13 @@ const Todo = () => {
 
   const todos = [
     "order analyze sidebar date and recency",
-    "calendar map tile highlights whether if there is a log",
     "oauth",
-    "allow to switch between weight vs reps, and weight vs date"
+    "allow to switch between weight vs reps, and weight vs date",
+    "figure out what to do with tags",
+    "allow searching on the side bar",
+    "figure out how to deploy this on the phone",
+    "convert to iphone app ??? ",
+    "account center for oauth",
   ];
 
   return (
