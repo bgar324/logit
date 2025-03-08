@@ -50,6 +50,8 @@ model ExercisePR {
   bestWeight   Float
   bestReps     Float
   workoutDate  DateTime
+
+  @@unique([exerciseName, workoutDate])
 }
 
 model Tag {
@@ -58,8 +60,8 @@ model Tag {
 }
 
 model Exercise {
-  id        Int        @id @default(autoincrement())
-  name      String     @unique
-  movements Movement[]
+  id         Int        @id @default(autoincrement())
+  name       String     @unique
   lastLogged DateTime?
+  movements  Movement[]
 }

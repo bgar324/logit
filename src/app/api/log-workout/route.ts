@@ -99,8 +99,18 @@ export async function POST(req: Request) {
           movement.sets[0]
         );
 
-        await prisma.exercisePR.create({
-          data: {
+        await prisma.exercisePR.upsert({
+          where: {
+            exerciseName_workoutDate: {
+              exerciseName: movement.name,
+              workoutDate: new Date(formattedDate),
+            },
+          },
+          update: {
+            bestWeight: bestSet.weight,
+            bestReps: bestSet.reps,
+          },
+          create: {
             exerciseName: movement.name,
             bestWeight: bestSet.weight,
             bestReps: bestSet.reps,
