@@ -9,7 +9,6 @@ const Todo = () => {
   // const [isOpen, setOpen] = useState(false);
 
   const todos = [
-    "order analyze sidebar date and recency DONE",
     "oauth",
     "allow to switch between weight vs reps, and weight vs date",
     "figure out what to do with tags",
