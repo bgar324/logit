@@ -83,7 +83,7 @@ export default function Home() {
           </a>
         </div>
       </div>
-      {/* <Todo /> */}
+      <Todo />
     </div>
   );
 }

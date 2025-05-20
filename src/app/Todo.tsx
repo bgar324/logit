@@ -12,7 +12,6 @@ const Todo = () => {
     "oauth",
     "allow to switch between weight vs reps, and weight vs date",
     "figure out what to do with tags",
-    "allow searching on the side bar",
     "figure out how to deploy this on the phone",
     "convert to iphone app ??? ",
     "account center for oauth",
